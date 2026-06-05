@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maximillian Returnus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080b11; --panel:#0e1320; --panel2:#131a2b; --line:#1e2940;
+    --ink:#cfd9ee; --dim:#6c7a96; --faint:#445069;
+    --up:#23d18b; --down:#ff5f6d; --amber:#ffb340; --cyan:#39d4ff; --violet:#a986ff;
+    --shadow:0 10px 40px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(57,212,255,.06), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(169,134,255,.05), transparent 60%),
+      var(--bg);
+    color:var(--ink);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;line-height:1.5}
+  h1,h2,h3,.disp{font-family:'Chakra Petch',sans-serif;letter-spacing:.04em}
+  a{color:var(--cyan)}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px 20px 60px}
+
+  /* topbar */
+  .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{font-size:20px;font-weight:700;text-transform:uppercase}
+  .brand .ii{color:var(--amber)}
+  .pill{font-family:'Chakra Petch';font-size:11px;font-weight:700;letter-spacing:.08em;
+    padding:4px 10px;border-radius:20px;text-transform:uppercase;border:1px solid}
+  .pill.paper{color:var(--amber);border-color:rgba(255,179,64,.5);background:rgba(255,179,64,.08)}
+  .pill.live{color:var(--up);border-color:rgba(35,209,139,.5);background:rgba(35,209,139,.08)}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;background:var(--faint)}
+  .dot.on{background:var(--up);box-shadow:0 0 8px var(--up);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  .spacer{flex:1}
+  .tok{background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    border-radius:7px;padding:7px 10px;font-family:'JetBrains Mono';font-size:12px;width:150px}
+  button{font-family:'Chakra Petch';font-weight:600;letter-spacing:.03em;cursor:pointer;
+    border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+    padding:8px 14px;border-radius:7px;transition:.15s}
+  button:hover{border-color:var(--cyan);color:#fff}
+  button.go{background:rgba(35,209,139,.12);border-color:rgba(35,209,139,.45);color:var(--up)}
+  button.stopb{background:rgba(255,95,109,.1);border-color:rgba(255,95,109,.4);color:var(--down)}
+
+  .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+  .card h2{margin:0 0 14px;font-size:13px;text-transform:uppercase;color:var(--dim);font-weight:600}
+
+  /* live market */
+  .slug{font-size:12px;color:var(--cyan);word-break:break-all}
+  .price-row{display:flex;gap:14px;margin:14px 0}
+  .pbox{flex:1;border:1px solid var(--line);border-radius:11px;padding:14px;text-align:center;background:rgba(255,255,255,.01)}
+  .pbox .lbl{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+  .pbox .val{font-family:'Chakra Petch';font-size:34px;font-weight:700;margin-top:4px}
+  .pbox.up .val{color:var(--up)} .pbox.down .val{color:var(--down)}
+  .clockbar{height:8px;border-radius:6px;background:var(--panel2);overflow:hidden;border:1px solid var(--line);margin-top:6px}
+  .clockfill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));width:0%}
+  .clockfill.past{background:linear-gradient(90deg,var(--amber),var(--down))}
+  .meta{display:flex;justify-content:space-between;color:var(--dim);font-size:12px;margin-top:8px}
+  .status{margin-top:14px;padding:11px 13px;border-radius:9px;border:1px dashed var(--line);
+    font-family:'Chakra Petch';font-weight:600;text-align:center;color:var(--dim)}
+  .status.armedY{color:var(--up);border-color:rgba(35,209,139,.5);background:rgba(35,209,139,.06)}
+  .status.armedN{color:var(--down);border-color:rgba(255,95,109,.5);background:rgba(255,95,109,.06)}
+  .status.wait{color:var(--cyan);border-color:rgba(57,212,255,.4)}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;background:rgba(255,255,255,.01)}
+  .stat .n{font-family:'Chakra Petch';font-size:24px;font-weight:700}
+  .stat .k{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+  .pos{color:var(--up)} .neg{color:var(--down)} .neu{color:var(--ink)}
+
+  /* equity */
+  #equity{width:100%;height:120px;display:block}
+
+  /* table */
+  .scroll{max-height:340px;overflow:auto;border-radius:10px;border:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{position:sticky;top:0;background:var(--panel2);color:var(--dim);text-align:left;
+    padding:9px 10px;font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line)}
+  td{padding:8px 10px;border-bottom:1px solid rgba(30,41,64,.5);white-space:nowrap}
+  tr:hover td{background:rgba(57,212,255,.04)}
+  .tag{font-family:'Chakra Petch';font-weight:600;font-size:10px;padding:2px 7px;border-radius:5px;letter-spacing:.05em}
+  .tag.YES{color:var(--up);background:rgba(35,209,139,.12)}
+  .tag.NO{color:var(--down);background:rgba(255,95,109,.12)}
+  .tag.WIN{color:#04130c;background:var(--up)}
+  .tag.LOSS{color:#1a0508;background:var(--down)}
+  .tag.PENDING{color:var(--amber);background:rgba(255,179,64,.12)}
+  .tag.VOID{color:var(--dim);background:rgba(108,122,150,.12)}
+
+  /* journal */
+  .journal{max-height:280px;overflow:auto;font-size:12px}
+  .jl{padding:3px 0;border-bottom:1px solid rgba(30,41,64,.4);display:flex;gap:8px}
+  .jl .t{color:var(--faint);flex-shrink:0}
+  .jl.entry .m{color:var(--cyan)} .jl.win .m{color:var(--up)}
+  .jl.loss .m{color:var(--down)} .jl.warn .m{color:var(--amber)}
+
+  /* settings */
+  .frow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .frow label{width:130px;color:var(--dim);font-size:12px}
+  .frow input,.frow select{flex:1;background:var(--panel2);border:1px solid var(--line);
+    color:var(--ink);border-radius:7px;padding:7px 9px;font-family:'JetBrains Mono';font-size:12px}
+  .note{color:var(--faint);font-size:11px;margin-top:6px;line-height:1.6}
+  .full{grid-column:1/-1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">Maxim<span class="ii">ii</span>llian Returnus</div>
+    <span class="pill paper" id="modePill">Paper</span>
+    <span id="runState"><span class="dot" id="runDot"></span><span id="runTxt" style="color:var(--dim)">stopped</span></span>
+    <div class="spacer"></div>
+    <input class="tok" id="token" type="password" placeholder="auth token">
+    <button class="go" id="startBtn">▶ Start</button>
+    <button class="stopb" id="stopBtn">■ Stop</button>
+  </div>
+
+  <div class="grid">
+    <!-- LIVE MARKET -->
+    <div class="card">
+      <h2>Live Market</h2>
+      <div class="slug" id="slug">—</div>
+      <div class="price-row">
+        <div class="pbox up"><div class="lbl">BTC Up (YES)</div><div class="val" id="upMid">--</div></div>
+        <div class="pbox down"><div class="lbl">BTC Down (NO)</div><div class="val" id="downMid">--</div></div>
+      </div>
+      <div class="clockbar"><div class="clockfill" id="clockFill"></div></div>
+      <div class="meta">
+        <span id="tInto">t+0s</span>
+        <span id="tLeft">resolves in --</span>
+      </div>
+      <div class="status wait" id="entryStatus">waiting for signal…</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="card">
+      <h2>Performance</h2>
+      <div class="stats">
+        <div class="stat"><div class="n neu" id="sTotal">0</div><div class="k">Trades</div></div>
+        <div class="stat"><div class="n pos" id="sWins">0</div><div class="k">Wins</div></div>
+        <div class="stat"><div class="n neg" id="sLoss">0</div><div class="k">Losses</div></div>
+        <div class="stat"><div class="n neu" id="sWR">--</div><div class="k">Win&nbsp;Rate</div></div>
+        <div class="stat"><div class="n neu" id="sPnl">$0</div><div class="k">Paper&nbsp;P&amp;L</div></div>
+        <div class="stat"><div class="n neu" id="sRoi">--</div><div class="k">ROI</div></div>
+      </div>
+      <div style="margin-top:14px;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.06em">Cumulative P&amp;L</div>
+      <canvas id="equity"></canvas>
+      <div class="meta"><span id="sWindows">0 windows observed</span><span id="sPending">0 pending</span></div>
+    </div>
+  </div>
+
+  <!-- TRADES -->
+  <div class="card" style="margin-top:16px">
+    <h2>Trade Log</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr>
+          <th>Window (UTC)</th><th>Side</th><th>Bought</th><th>UP mid</th>
+          <th>Fill</th><th>Shares</th><th>Status</th><th>Result</th><th>P&amp;L</th>
+        </tr></thead>
+        <tbody id="tradeBody"><tr><td colspan="9" style="color:var(--dim)">no trades yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:16px">
+    <!-- JOURNAL -->
+    <div class="card">
+      <h2>Journal</h2>
+      <div class="journal" id="journal"></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="card">
+      <h2>Strategy Settings</h2>
+      <div class="frow"><label>BUY YES when UP ≤</label><input id="cfgLow" type="number" step="0.01" value="0.30"></div>
+      <div class="frow"><label>BUY NO when UP ≥</label><input id="cfgHigh" type="number" step="0.01" value="0.70"></div>
+      <div class="frow"><label>Entry cutoff (s)</label><input id="cfgCut" type="number" step="5" value="240"></div>
+      <div class="frow"><label>Paper stake ($)</label><input id="cfgStake" type="number" step="0.5" value="1.00"></div>
+      <div class="frow"><label>Poll interval (s)</label><input id="cfgPoll" type="number" step="1" value="5"></div>
+      <div class="frow"><label>Asset</label>
+        <select id="cfgAsset"><option value="btc">BTC</option><option value="eth">ETH</option></select></div>
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button id="saveBtn" style="flex:1">Save Settings</button>
+        <button id="resetBtn" class="stopb">Reset Data</button>
+      </div>
+      <div class="note">Entry cutoff = max seconds into the 5-min window an entry may fire
+        (240 = "first 4 minutes"). One entry per market, held to resolution. Paper mode places no real orders.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmtPct = v => (v==null||isNaN(v)) ? '--' : (v*100).toFixed(0)+'%';
+const fmtMoney = v => (v==null||isNaN(v)) ? '$0' : (v<0?'-$':'$')+Math.abs(v).toFixed(2);
+const authHdr = () => ({'Authorization':'Bearer '+$('token').value.trim(),'Content-Type':'application/json'});
+
+let lastSecondsLeft = null, lastStamp = 0, equityData = [];
+
+/* ---- live clock interpolation ---- */
+function tickClock(){
+  if(lastSecondsLeft==null) return;
+  const elapsed = (Date.now()-lastStamp)/1000;
+  let left = Math.max(0, lastSecondsLeft - elapsed);
+  const into = 300 - left;
+  const pct = Math.min(100, into/300*100);
+  const fill = $('clockFill');
+  fill.style.width = pct.toFixed(1)+'%';
+  fill.className = 'clockfill' + (into>240?' past':'');
+  $('tInto').textContent = 't+'+into.toFixed(0)+'s';
+  $('tLeft').textContent = 'resolves in '+left.toFixed(0)+'s';
+}
+setInterval(tickClock, 250);
+
+/* ---- render current market ---- */
+function renderCurrent(c){
+  if(!c || !c.slug) return;
+  $('slug').textContent = c.slug + (c.found ? '' : '  (market not indexed yet…)');
+  $('upMid').textContent   = c.up_mid==null ? '--' : fmtPct(c.up_mid);
+  $('downMid').textContent = c.down_mid==null ? '--' : fmtPct(c.down_mid);
+  lastSecondsLeft = c.seconds_left; lastStamp = Date.now();
+  tickClock();
+
+  const s = $('entryStatus');
+  if(c.entered){ s.className='status wait'; s.textContent='● position open — holding to resolution'; }
+  else if(c.up_mid==null){ s.className='status'; s.textContent='waiting for price…'; }
+  else {
+    const low = parseFloat($('cfgLow').value), high = parseFloat($('cfgHigh').value);
+    if(c.up_mid<=low){ s.className='status armedY'; s.textContent='▲ signal: UP ≤ '+fmtPct(low)+' → would BUY YES'; }
+    else if(c.up_mid>=high){ s.className='status armedN'; s.textContent='▼ signal: UP ≥ '+fmtPct(high)+' → would BUY NO'; }
+    else { s.className='status wait'; s.textContent='watching… UP '+fmtPct(c.up_mid)+' (need ≤'+fmtPct(low)+' or ≥'+fmtPct(high)+')'; }
+  }
+}
+
+/* ---- render stats ---- */
+function renderStats(st){
+  if(!st) return;
+  $('sTotal').textContent = st.total;
+  $('sWins').textContent  = st.wins;
+  $('sLoss').textContent  = st.losses;
+  $('sWR').textContent    = st.win_rate==null?'--':st.win_rate+'%';
+  const pnlEl = $('sPnl'); pnlEl.textContent = fmtMoney(st.pnl);
+  pnlEl.className = 'n '+(st.pnl>0?'pos':st.pnl<0?'neg':'neu');
+  const roiEl = $('sRoi'); roiEl.textContent = st.roi==null?'--':st.roi+'%';
+  roiEl.className = 'n '+(st.roi>0?'pos':st.roi<0?'neg':'neu');
+  $('sWindows').textContent = (st.windows_observed||0)+' windows observed';
+  $('sPending').textContent = (st.pending||0)+' pending';
+}
+
+/* ---- journal ---- */
+function addLog(e){
+  const j = $('journal');
+  const d = document.createElement('div');
+  d.className = 'jl '+(e.level||'info');
+  const t = (e.ts||'').substring(11,19);
+  d.innerHTML = '<span class="t">'+t+'</span><span class="m"></span>';
+  d.querySelector('.m').textContent = e.msg;
+  j.prepend(d);
+  while(j.children.length>200) j.removeChild(j.lastChild);
+}
+
+/* ---- trades table + equity ---- */
+async function loadTrades(){
+  try{
+    const r = await fetch('/trades?limit=300'); const rows = await r.json();
+    const body = $('tradeBody');
+    if(!rows.length){ body.innerHTML='<tr><td colspan="9" style="color:var(--dim)">no trades yet</td></tr>'; }
+    else{
+      body.innerHTML = rows.map(t=>{
+        const when = new Date(t.window_ts*1000).toISOString().substring(11,16);
+        const pnl = t.pnl==null?'':fmtMoney(t.pnl);
+        const pnlCls = t.pnl>0?'pos':t.pnl<0?'neg':'';
+        return `<tr>
+          <td>${when}</td>
+          <td><span class="tag ${t.side}">${t.side}</span></td>
+          <td>${t.bought_outcome}</td>
+          <td>${t.trigger_up_mid==null?'':fmtPct(t.trigger_up_mid)}</td>
+          <td>${t.fill_price==null?'':(t.fill_price*100).toFixed(0)+'¢'}</td>
+          <td>${t.shares==null?'':t.shares.toFixed(2)}</td>
+          <td><span class="tag ${t.status}">${t.status}</span></td>
+          <td>${t.resolved_outcome||''}</td>
+          <td class="${pnlCls}">${pnl}</td>
+        </tr>`;
+      }).join('');
+    }
+    // equity curve (oldest -> newest)
+    const settled = rows.filter(t=>t.status==='WIN'||t.status==='LOSS')
+                        .sort((a,b)=>a.window_ts-b.window_ts);
+    let cum=0; equityData = settled.map(t=>{cum+=(t.pnl||0);return cum;});
+    drawEquity();
+  }catch(e){}
+}
+
+function drawEquity(){
+  const cv = $('equity'); const w = cv.clientWidth, h = 120;
+  cv.width = w; cv.height = h;
+  const ctx = cv.getContext('2d'); ctx.clearRect(0,0,w,h);
+  if(equityData.length<2){ ctx.fillStyle='#445069'; ctx.font='11px JetBrains Mono';
+    ctx.fillText('awaiting settled trades…',10,h/2); return; }
+  const min=Math.min(0,...equityData), max=Math.max(0,...equityData);
+  const pad=8, span=(max-min)||1;
+  const x=i=>pad+i*(w-2*pad)/(equityData.length-1);
+  const y=v=>h-pad-(v-min)/span*(h-2*pad);
+  // zero line
+  ctx.strokeStyle='rgba(108,122,150,.3)'; ctx.setLineDash([3,3]); ctx.beginPath();
+  ctx.moveTo(pad,y(0)); ctx.lineTo(w-pad,y(0)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.lineWidth=2; ctx.strokeStyle = equityData[equityData.length-1]>=0?'#23d18b':'#ff5f6d';
+  ctx.beginPath(); equityData.forEach((v,i)=>{i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v));}); ctx.stroke();
+}
+
+/* ---- websocket ---- */
+function connectWS(){
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(proto+'://'+location.host+'/ws');
+  ws.onmessage = ev=>{
+    const d = JSON.parse(ev.data);
+    if(d.type==='state'){ renderCurrent(d.current); renderStats(d.stats);
+      if('running' in d) setRunning(d.running); loadTrades(); }
+    else if(d.type==='log'){ addLog(d.entry); loadTrades(); }
+  };
+  ws.onclose = ()=> setTimeout(connectWS, 2000);
+}
+
+function setRunning(on){
+  $('runDot').className = 'dot'+(on?' on':'');
+  $('runTxt').textContent = on?'running':'stopped';
+  $('runTxt').style.color = on?'var(--up)':'var(--dim)';
+}
+
+/* ---- controls ---- */
+async function post(path, body){
+  const r = await fetch(path,{method:'POST',headers:authHdr(),body:body?JSON.stringify(body):null});
+  if(r.status===401){ alert('Bad or missing auth token'); return null; }
+  return r.json();
+}
+$('startBtn').onclick = ()=>post('/start');
+$('stopBtn').onclick  = ()=>post('/stop');
+$('saveBtn').onclick  = async ()=>{
+  await post('/settings',{
+    low_thresh:+$('cfgLow').value, high_thresh:+$('cfgHigh').value,
+    entry_cutoff:+$('cfgCut').value, stake:+$('cfgStake').value,
+    poll_interval:+$('cfgPoll').value, asset:$('cfgAsset').value});
+};
+$('resetBtn').onclick = async ()=>{ if(confirm('Wipe all paper trade history?')) { await post('/reset'); loadTrades(); } };
+
+/* ---- boot ---- */
+async function boot(){
+  try{
+    const h = await (await fetch('/health')).json();
+    setRunning(h.running); renderStats(h.stats); renderCurrent(h.current);
+    const s = h.settings||{};
+    if(s.low_thresh!=null)$('cfgLow').value=s.low_thresh;
+    if(s.high_thresh!=null)$('cfgHigh').value=s.high_thresh;
+    if(s.entry_cutoff!=null)$('cfgCut').value=s.entry_cutoff;
+    if(s.stake!=null)$('cfgStake').value=s.stake;
+    if(s.poll_interval!=null)$('cfgPoll').value=s.poll_interval;
+    if(h.asset)$('cfgAsset').value=h.asset;
+  }catch(e){}
+  try{ const jr = await (await fetch('/journal')).json(); jr.slice(-50).forEach(addLog); }catch(e){}
+  loadTrades(); connectWS();
+}
+boot();
+setInterval(loadTrades, 15000);
+window.addEventListener('resize', drawEquity);
+</script>
+</body>
+</html>
